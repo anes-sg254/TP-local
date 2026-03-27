@@ -13,11 +13,11 @@ variable "instance_name" {
 variable "bucket_name" {
   description = "Nom du bucket S3"
   type        = string
-  default     = "my-terraform-bucket-demo"
+  default     = "my-terraform-bucket"
 }
 
 variable "security_group_port" {
-  description = "Port par defaut pour le groupe de securite"
+  description = "Port par defaut du groupe de securite"
   type        = number
   default     = 80
 }
