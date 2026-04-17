@@ -15,10 +15,10 @@ resource "local_file" "private_key" {
 }
 
 resource "aws_instance" "web" {
-  ami             = "ami-12345678"
-  instance_type   = "t2.micro"
-  security_groups = [aws_security_group.web.name]
-  key_name        = aws_key_pair.deployer.key_name
+  ami                    = "ami-002cb6127676a5723"
+  instance_type          = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.example.id]
+  key_name               = aws_key_pair.deployer.key_name
 
   user_data = <<-EOF
               #!/bin/bash

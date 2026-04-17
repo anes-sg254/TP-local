@@ -8,28 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  access_key = "test"
-  secret_key = "test"
-  region     = "us-east-1"
-
-  s3_use_path_style           = true
-  skip_credentials_validation = true
-  skip_metadata_api_check     = true
-  skip_requesting_account_id  = true
-
-  endpoints {
-    s3  = "http://localhost:4566"
-    ec2 = "http://localhost:4566"
-  }
-}
-
-resource "aws_instance" "example" {
-  ami           = "ami-12345678"
-  instance_type = var.instance_type
-
-  tags = {
-    Name = var.instance_name
-  }
+  region = "us-east-1"
 }
 
 resource "aws_security_group" "example" {
@@ -40,5 +19,43 @@ resource "aws_security_group" "example" {
     to_port     = var.security_group_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "example" {
+  ami                    = "ami-002cb6127676a5723"
+  instance_type          = var.instance_type
+  key_name               = aws_key_pair.deployer.key_name
+  vpc_security_group_ids = [aws_security_group.example.id]
+
+  tags = {
+    Name = var.instance_name
+    Role = "web"
+  }
+}
+
+resource "aws_instance" "database" {
+  ami                    = "ami-002cb6127676a5723"
+  instance_type          = var.instance_type
+  key_name               = aws_key_pair.deployer.key_name
+  vpc_security_group_ids = [aws_security_group.example.id]
+
+  tags = {
+    Name = "db-server"
+    Role = "database"
   }
 }
